@@ -84,7 +84,47 @@ describe("registry", function() {
 			).to.equal("abc");
 		});
 	});
-	describe("#resolve", function() {
+	describe("#isRegistered", function() {
+		it("returns false if nothing is registered", function() {
+			expect(
+				registry.isRegistered('some.id')
+			).to.be.false;
+		});
+		it("returns true if something has been registered", function() {
+			registry.register('some.id', {});
+			expect(
+				registry.isRegistered('some.id')
+			).to.be.true;
+		});
+	});
+	describe("#deregister", function() {
+		it("removes items", function() {
+			registry.register('some.id', {});
+			expect(
+				registry.isRegistered('some.id')
+			).to.be.true;
+			registry.deregister('some.id');
+			expect(
+				registry.isRegistered('some.id')
+			).to.be.false;
+		});
+		it("throws an error if nothing has been registered for the logical name", function() {
+			expect(
+				registry.deregister.bind(registry, 'some.id')
+			).to.throw(
+				NotRegisteredError
+			);
+		});
+		it("a new item can be registered after being deregistered", function() {
+			registry.register('some.id', new MyObject(1234));
+			registry.deregister('some.id');
+			registry.register('some.id', new MyObject("abc"));
+			expect(
+				registry.resolve('some.id').val
+			).to.equal("abc");
+		});
+	});
+	describe("#destroy", function() {
 		
 	});
 });

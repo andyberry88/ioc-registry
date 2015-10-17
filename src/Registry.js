@@ -17,6 +17,14 @@ var Registry = function() {
 		store[logicalName] = obj;
 	};
 	
+	this.deregister = function(logicalName) {
+		if (!that.isRegistered(logicalName)) {
+			throw new (require("./errors/NotRegisteredError"))(logicalName, that.id());
+		}
+		
+		delete store[logicalName];
+	};
+	
 	this.resolve = function(logicalName) {
 		if (!that.isRegistered(logicalName)) {
 			throw new (require("./errors/NotRegisteredError"))(logicalName, that.id());

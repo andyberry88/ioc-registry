@@ -10,15 +10,23 @@ var Registry = function() {
 	};
 	
 	this.register = function(logicalName, obj) {
+		if (that.isRegistered(logicalName)) {
+			throw new (require("./errors/AlreadyRegisteredError"))(logicalName, that.id());
+		}
 		
+		store[logicalName] = obj;
 	};
 	
 	this.resolve = function(logicalName) {
+		if (!that.isRegistered(logicalName)) {
+			throw new (require("./errors/NotRegisteredError"))(logicalName, that.id());
+		}
 		
+		return store[logicalName];
 	};
 	
-	this.MESSAGES = {
-		
+	this.isRegistered = function(logicalName) {
+		return logicalName in store;
 	};
 	
 };

@@ -6,13 +6,14 @@
   "scripts": {
     "pretest": "npm install -g mocha jshint",
     "test": "mocha tests",
-	"posttest": "jshint src tests",
+    "posttest": "jshint src tests",
     "test-dev": "mocha tests -w"
   },
   "author": "Andy Berry <http://andy-berry.co.uk>",
   "license": "MIT",
   "dependencies": {
-    "sprintf-js": "^1.0.3"
+    "sprintf-js": "^1.0.3",
+    "topiarist": "^0.1.4"
   },
   "devDependencies": {
     "chai": "^3.3.0",

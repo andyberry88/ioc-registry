@@ -1,3 +1,5 @@
+'use strict';
+
 var utils = module.exports = {
 	
 	generateId: function() {
@@ -8,4 +10,4 @@ var utils = module.exports = {
 		return Math.floor(Math.random() * (high - low + 1) + low);
 	}
 	
-}
+};

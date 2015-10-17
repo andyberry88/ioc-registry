@@ -4,9 +4,10 @@
   "description": "A registry which allows a module implementation and objects to be registered against a logical name to provide an IOC mechanism.",
   "main": "index.js",
   "scripts": {
+	"lint": "jshint src tests",
     "pretest": "npm install -g mocha jshint",
     "test": "mocha tests",
-    "posttest": "jshint src tests",
+    "posttest": "npm run lint",
     "test-dev": "mocha tests -w"
   },
   "author": "Andy Berry <http://andy-berry.co.uk>",

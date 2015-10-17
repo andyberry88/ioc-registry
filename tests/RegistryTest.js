@@ -1,5 +1,6 @@
-/*jslint node: true */
-/* global describe, it, xit, beforeEach */
+/* jslint node: true */
+/* jshint -W024 */ /* jshint expr:true */ // required to prevent jshint failing on expect(..).to.exist;
+/* global describe, it, beforeEach */
 'use strict';
 
 var expect = require('chai').expect;
@@ -9,7 +10,7 @@ var AlreadyRegisteredError = require("../src/errors/AlreadyRegisteredError");
 
 var MyObject = function(val) {
 	this.val = val;
-}
+};
 
 var registry;
 

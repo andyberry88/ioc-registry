@@ -4,9 +4,9 @@
   "description": "A registry which allows a module implementation and objects to be registered against a logical name to provide an IOC mechanism.",
   "main": "index.js",
   "scripts": {
-	"lint": "jshint src tests",
+    "lint": "jshint src tests",
     "pretest": "npm install -g mocha jshint",
-	"posttest": "npm run lint",
+    "posttest": "npm run lint",
     "test": "mocha src tests --check-leaks",
     "test-dev": "mocha src tests -w -G --check-leaks"
   },
@@ -18,6 +18,8 @@
   },
   "devDependencies": {
     "chai": "^3.3.0",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1",
+    "sinon-chai": "^2.8.0"
   }
 }

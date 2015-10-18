@@ -69,10 +69,29 @@ describe("registry", function() {
 		it("throws an error if something has already been registered for the logical name", function() {
 			registry.register('some.id', {});
 			expect(
-				registry.register.bind(registry, 'some.id')
+				registry.register.bind(registry, 'some.id', {})
 			).to.throw(
 				AlreadyRegisteredError
 			);
+		});
+		it("can be used to register an class reference", function() {
+			registry.register('some.id', MyObject);
+			var MyObjectReference = registry.resolve('some.id');
+			expect(
+				(new MyObjectReference(1234)).val
+			).to.equal(1234);
+		});
+		it("can be used to register an object reference", function() {
+			registry.register('some.id', new MyObject(1234));
+			expect(
+				registry.resolve('some.id').val
+			).to.equal(1234);
+		});
+		it("can be used to register a primitive", function() {
+			registry.register('some.id', 1234);
+			expect(
+				registry.resolve('some.id')
+			).to.equal(1234);
 		});
 	});
 	describe("#resolve", function() {
@@ -83,19 +102,27 @@ describe("registry", function() {
 				NotRegisteredError
 			);
 		});
-		it("returns the item that has been registered for a logical name", function() {
+		it("returns the object that has been registered for a logical name", function() {
 			registry.register('some.id', new MyObject(1234));
 			expect(
 				registry.resolve('some.id').val
 			).to.equal(1234);
 		});
-		it("returns same item that has been registered for a logical name", function() {
+		it("returns same object that has been registered for a logical name", function() {
 			var object = new MyObject(1234);
 			registry.register('some.id', object);
 			object.val = "abc";
 			expect(
 				registry.resolve('some.id').val
 			).to.equal("abc");
+		});
+		it("returns same class reference that has been registered for a logical name", function() {
+			var ClassRef = function() {}
+			registry.register('some.id', ClassRef);
+			ClassRef.someFunc = function(){};
+			expect(
+				registry.resolve('some.id').someFunc
+			).to.be.a("function");
 		});
 	});
 	describe("#isRegistered", function() {
@@ -178,6 +205,26 @@ describe("registry", function() {
 			
 			mockObj1.verify();
 			mockObj2.verify();
+		});
+		it("doesnt call destroy on registered class references", function () {
+			var MyInterface = function() {};
+			MyInterface.destroy = function(){} 
+			
+			var MockMyInterface = mock(MyInterface);
+			MockMyInterface.expects("destroy").never();
+			
+			registry.register('obj1', MyInterface);
+			
+			registry.destroy();
+			
+			MockMyInterface.verify();
+		});
+		it("doesnt call destroy on class references with a static destroy method", function () {
+			var MyInterface = function() { this.destroy = function(){} };
+			
+			registry.register('obj1', MyInterface);
+			
+			registry.destroy();
 		});
 		it("calls destroy on registered items even if first throws an error on destroy", function () {
 			var MyInterface = function() { this.destroy = function(){} };

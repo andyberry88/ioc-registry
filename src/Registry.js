@@ -1,5 +1,7 @@
 'use strict';
 
+var sprintf = require("sprintf-js").sprintf;
+
 var Registry = function() {
 	var theId = require("./Utils").generateId(),
 		store = {},
@@ -42,15 +44,15 @@ var Registry = function() {
 	}
 	
 	this.destroy = function() {
-		for (var serviceName in store) {
-			if (store.hasOwnProperty(serviceName)) {
-				var item = store[serviceName];
+		for (var itemName in store) {
+			if (store.hasOwnProperty(itemName)) {
+				var item = store[itemName];
 				if (typeof item.destroy !== "undefined") {
 					if (item.destroy.length == 0) {
 						try {
 							item.destroy();
 						} catch (e) {
-							// log.error(ServiceRegistryClass.LOG_MESSAGES.DISPOSE_ERROR, serviceName, e);
+							console.error( sprintf(Registry.LOG_MESSAGES.DISPOSE_ERROR, itemName, e) );
 						}
 					}
 				}
@@ -61,5 +63,10 @@ var Registry = function() {
 	}
 	
 };
+
+Registry.LOG_MESSAGES = {
+		DISPOSE_ERROR: "The item registered as '%s' threw an error while being destroyed. The error was: %s"
+	}
+
 
 module.exports = Registry;

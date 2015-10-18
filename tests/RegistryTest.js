@@ -21,10 +21,16 @@ var MyObject = function(val) {
 };
 
 var registry;
+var mockConsole;
 
 describe("registry", function() {
 	beforeEach(function() {
 		registry = new Registry();
+	});
+	afterEach(function() {
+		if (mockConsole) {
+			mockConsole.restore();
+		}
 	});
 	describe("#id", function() {
 		it("returns the registry id", function() {
@@ -155,7 +161,7 @@ describe("registry", function() {
 			expect( registry.isRegistered('some.id') ).to.be.false;
 			expect( registry.isRegistered('another.id') ).to.be.false;
 		});
-		it("calls destroy on registered services", function () {
+		it("calls destroy on registered items", function () {
 			var MyInterface = function() { this.destroy = function(){} };
 			var obj1 = new MyInterface();
 			var obj2 = new MyInterface();
@@ -173,7 +179,7 @@ describe("registry", function() {
 			mockObj1.verify();
 			mockObj2.verify();
 		});
-		it("calls dispose on registered services even if first throws an error on dispose", function () {
+		it("calls destroy on registered items even if first throws an error on destroy", function () {
 			var MyInterface = function() { this.destroy = function(){} };
 			var obj1 = new MyInterface();
 			var obj2 = new MyInterface();
@@ -191,7 +197,24 @@ describe("registry", function() {
 			mockObj1.verify();
 			mockObj2.verify();
 		});
-		it("does not call dispose on servies if service doesnt implement dispose method", function() {
+		it("logs an error if an item throws an error on #destroy", function () {
+			var MyInterface = function() { this.destroy = function(){} };
+			var obj1 = new MyInterface();
+			
+			mockConsole = mock(console);
+			mockConsole.expects("error").withArgs("The item registered as 'obj1' threw an error while being destroyed. The error was: some error");
+			
+			var mockObj1 = mock(obj1);
+			mockObj1.expects("destroy").once().throws('some error');
+			
+			registry.register('obj1', obj1);
+			
+			registry.destroy();
+			
+			mockObj1.verify();
+			mockConsole.verify();
+		});
+		it("does not call destroy on items if it doesnt implement destroy method", function() {
 			var MyInterface = function() { this.someMethod = function(){} };
 			var obj1 = new MyInterface();
 			
@@ -202,7 +225,7 @@ describe("registry", function() {
 			
 			mockObj1.verify();
 		});
-		it("does not call dispose on services if service implements dispose method which accepts more than 0 args", function() {
+		it("does not call destroy on items if it implements destroy method which accepts more than 0 args", function() {
 			var destroyCalled = false; // this has to be done with a real object rather than mocks so item.destroy.length has the correct value
 			var obj1 = {
 				destroy: function(arg1) {

@@ -37,6 +37,29 @@ var Registry = function() {
 		return logicalName in store;
 	};
 	
+	this.registeredNames = function() {
+		return Object.keys(store);
+	}
+	
+	this.destroy = function() {
+		for (var serviceName in store) {
+			if (store.hasOwnProperty(serviceName)) {
+				var item = store[serviceName];
+				if (typeof item.destroy !== "undefined") {
+					if (item.destroy.length == 0) {
+						try {
+							item.destroy();
+						} catch (e) {
+							// log.error(ServiceRegistryClass.LOG_MESSAGES.DISPOSE_ERROR, serviceName, e);
+						}
+					}
+				}
+			}
+		}
+	
+		store = {};
+	}
+	
 };
 
 module.exports = Registry;

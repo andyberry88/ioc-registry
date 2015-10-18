@@ -1,9 +1,17 @@
+/* global destroy */
 /* jslint node: true */
 /* jshint -W024 */ /* jshint expr:true */ // required to prevent jshint failing on expect(..).to.exist;
-/* global describe, it, beforeEach */
+/* global describe, it, beforeEach, afterEach */
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require("chai");
+var jsmockito = require("jsmockito").JsMockito;
+
+var mock = jsmockito.mock;
+var when = jsmockito.when;
+var verify = jsmockito.verify;
+var expect = chai.expect;
+
 var Registry = require("../src/Registry");
 var NotRegisteredError = require("../src/errors/NotRegisteredError");
 var AlreadyRegisteredError = require("../src/errors/AlreadyRegisteredError");
@@ -124,7 +132,80 @@ describe("registry", function() {
 			).to.equal("abc");
 		});
 	});
+	describe("#registeredNames", function() {
+		it("returns an empty list if nothing is registered", function() {
+			expect(
+				registry.registeredNames()
+			).to.be.eql( [] );
+		});
+		it("returns the list of registered names", function() {
+			registry.register('obj1', {});
+			registry.register('obj2', {});
+			registry.register('obj3', {});
+			expect(
+				registry.registeredNames()
+			).to.be.eql( ['obj1', 'obj2', 'obj3'] );
+		});
+	});
 	describe("#destroy", function() {
-		
+		it("clears the registry", function() {
+			registry.register('some.id', {});
+			registry.register('another.id', {});
+			registry.destroy();
+			expect( registry.isRegistered('some.id') ).to.be.false;
+			expect( registry.isRegistered('another.id') ).to.be.false;
+		});
+		it("calls destroy on registered services", function () {
+			var myInterface = { destroy: function(){} };
+			var mockObj1 = mock(myInterface);
+			var mockObj2 = mock(myInterface);
+			
+			registry.register('obj1', mockObj1);
+			registry.register('obj2', mockObj2);
+			
+			registry.destroy();
+			
+			verify(mockObj1).destroy();
+			verify(mockObj2).destroy();
+		});
+		it("calls dispose on registered services even if first throws an error on dispose", function () {
+			var myInterface = { destroy: function(){} };
+			var mockObj1 = mock(myInterface);
+			var mockObj2 = mock(myInterface);
+			
+			registry.register('obj1', mockObj1);
+			registry.register('obj2', mockObj2);
+			
+			when(mockObj1).destroy().thenThrow( 'some error' );
+			
+			registry.destroy();
+			
+			verify(mockObj1).destroy();
+			verify(mockObj2).destroy();
+		});
+		it("does not call dispose on servies if service doesnt implement dispose method", function() {
+			var myInterface = { someMethod: function(){} };
+			var mockObj1 = mock(myInterface);
+			
+			registry.register('obj1', mockObj1);
+			
+			registry.destroy();
+			
+			jsmockito.verifyZeroInteractions(mockObj1);
+		});
+		it("does not call dispose on services if service implements dispose method which accepts more than 0 args", function() {
+			var destroyCalled = false; // this has to be done with a real object rather than mocks so item.destroy.length has the correct value
+			var obj1 = {
+				destroy: function(arg1) {
+					destroyCalled = true;
+				}
+			}
+			
+			registry.register('obj1', obj1);
+			
+			registry.destroy();
+			
+			expect(destroyCalled).to.be.false;
+		});
 	});
 });

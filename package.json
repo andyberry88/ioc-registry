@@ -6,9 +6,9 @@
   "scripts": {
 	"lint": "jshint src tests",
     "pretest": "npm install -g mocha jshint",
-    "test": "mocha tests",
-    "posttest": "npm run lint",
-    "test-dev": "mocha tests -w"
+	"posttest": "npm run lint",
+    "test": "mocha src tests --check-leaks",
+    "test-dev": "mocha src tests -w -G --check-leaks"
   },
   "author": "Andy Berry <http://andy-berry.co.uk>",
   "license": "MIT",

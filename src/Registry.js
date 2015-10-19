@@ -41,14 +41,14 @@ var Registry = function() {
 	
 	this.registeredNames = function() {
 		return Object.keys(store);
-	}
+	};
 	
 	this.destroy = function() {
 		for (var itemName in store) {
 			if (store.hasOwnProperty(itemName)) {
 				var item = store[itemName];
 				if (typeof item.destroy !== "undefined") {
-					if (item.destroy.length == 0) {
+					if (item.destroy.length === 0) {
 						try {
 							item.destroy();
 						} catch (e) {
@@ -60,13 +60,13 @@ var Registry = function() {
 		}
 	
 		store = {};
-	}
+	};
 	
 };
 
 Registry.LOG_MESSAGES = {
-		DISPOSE_ERROR: "The item registered as '%s' threw an error while being destroyed. The error was: %s"
-	}
+	DISPOSE_ERROR: "The item registered as '%s' threw an error while being destroyed. The error was: %s"
+};
 
 
 module.exports = Registry;

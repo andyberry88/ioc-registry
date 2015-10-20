@@ -4,11 +4,15 @@
   "description": "A registry which allows a module implementation and objects to be registered against a logical name to provide an IOC mechanism.",
   "main": "index.js",
   "scripts": {
+    "clean": "rimraf dist",
     "lint": "jshint src",
-    "pretest": "npm install -g mocha jshint",
-    "posttest": "npm run lint",
+    "pretest": "npm run prepublish",
     "test": "mocha src tests --check-leaks",
-    "test-dev": "mocha src tests -w -G --check-leaks"
+    "test:dev": "npm run test -- -w -G --check-leaks",
+    "posttest": "npm run lint",
+    "prepublish": "npm run clean && npm run browserify && npm run browserify:standalone",
+    "browserify": "mkdirp dist && browserify index.js -o dist/ioc-registry.js",
+    "browserify:standalone": "mkdirp dist && browserify index.js -o dist/ioc-registry_umd.js --standalone ioc_registry"
   },
   "author": "Andy Berry <http://andy-berry.co.uk>",
   "license": "MIT",
@@ -18,7 +22,10 @@
   },
   "devDependencies": {
     "chai": "^3.3.0",
+    "jshint": "^2.8.0",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",
+    "rimraf": "^2.4.3",
     "sinon": "^1.17.1",
     "sinon-chai": "^2.8.0"
   }

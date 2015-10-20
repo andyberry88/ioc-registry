@@ -1,8 +1,15 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "4.0"
-  - "4.1"
-  - "4.2"
-  - "iojs"
-  - "stable"
+- '0.12'
+- '4.0'
+- '4.1'
+- '4.2'
+- iojs
+- stable
+script: "npm test && npm test:saucelabs"
+addons:
+  sauce_connect: true
+env:
+  global:
+  - secure: 1lrp628ynsb1pBjHihvPvhAdhkCd1fdMENLgpcQITMWXHmr/MkZabYEvcL0zinuN09HKOjl6V8mJGl9fjGonLTtYHNaH/ZKtJGYhErU10YQCHaD0Rf03Q/5GIMBuv+KSsbn5CwCsbBH3vF3QS0KKF8kPjH0eXE35goNujA5Rs0Uwf1OF2hiZdi+Yt1htELzharl4AuiqwsQnxKHbXtGYCqvPp0bu32X4wwjMFl7XSwjWaVHw4MVGD+Ef04LoH5BDRbm19BewXvRtUXVhbPJNTqlJSabDB6+w/iVmD6esbSHEiXZbDWp19lEwnDqhxkfc89hGbXgCNaRBNHllcxJzrtrrto0h+AXUoW9nRRhU3IeKZrnojHTZgNrD+n7fN+O5LuVWu42oNCBTNiJDIzn9e2crWu1t0TXo4ZBi0XDqGM7EOfSqAfEVFfrBdAd2z52BOTfCC7gqFBYqmcFVGxqa90cAZiECrW9E3wxqA0jt+S+JT03pWbxg7jmXmZpEC9YT1NBnNCiPRftChC9W6eM16nRCnyzlCsMpLjDAz/Qa5sfiFMV3rZjBpI9jJpCKXpCo3yEFvUHOlJ4PWnl+NH8/1IA5ZxndiFXCJBobmap5Tj6T+uae2lHOwTUNLWtWy3lhWUQR/B8eFLSc53QTu1qzOCvkyz3EIQJSA65OT8YS9Kk=
+  - secure: TruVaQCP1IfSNiVpc7dcuMEethKK0Zb/p5+49L4knz1pDt4oyZ4GQolFpZ3M7F2/NFaMtPEIk57GXtaSTNmsKPnVQ17lzMFAPKcQhLrWbF4mQRDkvotzl4fHfKPpGWVoPBjyJYWXPOyihuGtXi9fCMS/Y1RjydteoqgTQQx8qbqLTaYDkhLwRYrdp8QZnygnnTM4uMnRx96lS6HVvpesrCe8GqeEFdah/M27pmyoaHT3sL0nl5w9luKr+l9Jf6jlLbnLcbODqps2K05ep4loLjg+IMHbKM9jgx2it8LY/mRyKZs1NsWJIyCLkZ7DoC4f/6T7eiIlEeXIlRtvMKWYJdAfLXQBdUXRl9rhdBkvspddoedvVhIOn4DHTwwBn12c69yeqPmEvEUyU/a6YldySJCl/S9OQFisuS327rdBLVMr+PbJbD2ueGSCAGoBQmcbQW2fQ7g4z9BwNKEib6I56e1L73VEBhp508xGK40V614r1JL1GeGVLKTbBcnVQ/wNWox8jXgL5OU0KgvoiWEjiiSTYbWNhkp/wvIymUQhN0/qRaaBqADcPoA6+PwN0WBWfAdeCiq8nFd8mp5DNh9ctRNI40g6j+X+waOvhe6XG5Um4bOLZ/dmixsNq0tXbVMObr6B+9LgrkHb8i0RY8PPgwo8fPbdbZA382YFidadeVA=

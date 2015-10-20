@@ -7,7 +7,7 @@
     "clean": "rimraf dist",
     "lint": "jshint src",
     "pretest": "npm run prepublish",
-	"test": "npm run test:node && npm run test:browser",
+    "test": "npm run test:node && npm run test:browser",
     "test:node": "mocha src tests --check-leaks",
     "test:dev": "npm run test -- -w -G --check-leaks",
     "test:browser": "karma start",
@@ -25,6 +25,7 @@
     "topiarist": "^0.1.4"
   },
   "devDependencies": {
+    "browserify": "^11.2.0",
     "chai": "^3.3.0",
     "env-check": "0.0.1",
     "jshint": "^2.8.0",

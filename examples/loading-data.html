@@ -1,0 +1,100 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	
+	<title>IOC Registry Example - Loading Data</title>
+	
+	<style>
+		body {
+			min-width:200px;
+			max-width:500px;
+			margin:0 auto;
+			padding:50px 75px;
+		}
+		.error {
+			color:red;
+		}
+		#data {
+			border:1px solid #ccc;
+			margin:20px 0;
+			padding:3px;
+		}
+	</style>
+	
+	<!--[if lt IE 9]>
+	<script src="html5-shiv.js"></script>
+	<![endif]-->
+</head>
+<body>
+	
+	<p>
+		In this example the 'app' registers either a service which loads data via an XHR request (with a 1 second delay) or one that immediately returns back some mock data. The 'feature' that uses the service doesn't know the difference, it just sees an API. This is particularly useful for replacing services during tests so that mock data can be generated.
+	</p>
+	
+	<button id="xhrLoader">Use XHR Loader</button>
+	<button id="dummyLoader">Use Dummy Data Loader</button>
+	<div id="data"></div>
+	
+	
+	<script src="jquery-2.1.4.js"></script>
+	<script src="../dist/ioc-registry_umd.js"></script>
+	<script>
+		/** ################
+		 * App Bootstrap - Register the service
+		 * ################ */
+		var XhrDataLoader = function() {
+		};
+		XhrDataLoader.prototype.getData = function() {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					$.get("./data.txt", function(data) {
+						resolve(data)
+					}).fail(function(jqXHR, textStatus) {
+						reject(textStatus);
+					})
+				}, 1000);
+			});
+		}
+		
+		var DummyDataLoader = function() {
+		}
+		DummyDataLoader.prototype.getData = function() {
+			return new Promise(function(resolve, reject) {
+				resolve("this is some dummy data returned from XhrDataLoader");
+			});
+		}
+		
+		ioc_registry.register('data-loader', new XhrDataLoader());
+	</script>
+	
+	<script>
+		/** ################
+		 * App code - use the service. Imagine this is in a seperate script file :-)
+		 * ################ */
+		function render() {
+			$("#data").html("loading........");
+			ioc_registry.resolve('data-loader').getData()
+				.then(function(val) {
+					$("#data").html(val);
+				}).catch(function(reason) {
+					$("#data").html("<span class='error'>There was an error loading the data:<pre>"+reason+"</pre></span>");
+				});
+		}
+		
+		render();
+		$("#xhrLoader").click(function(){
+			ioc_registry.deregister('data-loader');
+			ioc_registry.register('data-loader', new XhrDataLoader());
+			render();
+		});
+		$("#dummyLoader").click(function() {
+			ioc_registry.deregister('data-loader');
+			ioc_registry.register('data-loader', new DummyDataLoader());
+			render();
+		});
+	</script>
+	
+</body>
+</html>

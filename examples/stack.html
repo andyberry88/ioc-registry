@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	
+	<title>IOC Registry Example - Stack</title>
+	
+	<style>
+		body {
+			min-width:200px;
+			max-width:500px;
+			margin:0 auto;
+			padding:50px 75px;
+		}
+		input, button {
+			font-size:14px;
+		}
+		#stack-output {
+			border:1px solid #ccc;
+			margin:20px 0;
+			padding:3px;
+		}
+		ul {
+			padding:0 0 0 25px;
+			margin:0;
+		}
+		li {
+			padding:2px 0;
+		}
+		ul li:last-child {
+			color:blue;
+		}
+	</style>
+	
+	<!--[if lt IE 9]>
+	<script src="html5-shiv.js"></script>
+	<![endif]-->
+</head>
+<body>
+	
+	<p>
+		In this example the 'app' registers an item with the IOC registry whose ID is 'items-stack'. The 'features' within the app make use of the item by requesting it from the IOC registry. The item registered can then be reconfigured without changing the feature, so long as the API of the item remains the same.
+	</p>
+	
+	<input id="stack-input" placeholder="Type something" />
+	<button id="push" type="button">Push</button>
+	<button id="pop" type="button">Pop</button>
+	
+	<div id="stack-output"></div>
+	<div id="last-popped"></div>
+	
+	<script src="jquery-2.1.4.js"></script>
+	<script src="../dist/ioc-registry_umd.js"></script>
+	<script>
+		/** ################
+		 * App Bootstrap - Register the service
+		 * ################ */
+		var LocalStorageStack = function() {
+			var localStorageItem = window.localStorage.getItem(LocalStorageStack.localStorageId);
+			try {
+				this._items = (localStorageItem) ? JSON.parse(localStorageItem) : [];	
+			} catch (e) {
+				this._items = [];
+			}
+			if (!Array.isArray(this._items)) {
+				this._items = [];
+			}
+			this.save();
+		};
+		LocalStorageStack.prototype.push = function(item) {
+			if (item) {
+				this._items.push(item);
+			}
+			this.save();
+		};
+		LocalStorageStack.prototype.pop = function() {
+			var item = this._items.pop();
+			this.save();
+			return item;
+		};
+		LocalStorageStack.prototype.items = function() {
+			return this._items;
+		};
+		LocalStorageStack.prototype.save = function() {
+			window.localStorage.setItem(LocalStorageStack.localStorageId, JSON.stringify(this._items));
+		}
+		LocalStorageStack.localStorageId = "ioc-registry-example-stack";
+		
+		ioc_registry.register('items-stack', new LocalStorageStack());
+	</script>
+	
+	<script>
+		/** ################
+		 * App code - use the service. Imagine this is in a seperate script file :-)
+		 * ################ */
+		function pushItem() {
+			var item = $("#stack-input").val();
+			ioc_registry.resolve('items-stack').push(item);
+			render();
+		}
+		function popItem() {
+			var item = ioc_registry.resolve('items-stack').pop();
+			render();
+			$("#last-popped").html("Last popped: " + item);
+		}
+		function render() {
+			var outputEl = $("#stack-output").empty().append("<ul></ul>").find("ul");
+			
+			var items = ioc_registry.resolve('items-stack').items();
+			for (var i = 0; i < items.length; i++) {
+				outputEl.append("<li>"+items[i]+"</li>");
+			}
+			
+			$("#stack-input").val("");
+			$("#stack-input").focus();
+		}
+		
+		render();
+		$('#stack-input').on('keypress', function (event) {
+			if(event.which === 13) { pushItem(); }
+		});
+		$("#push").click(pushItem);
+		$("#pop").click(popItem);
+	</script>
+	
+</body>
+</html>

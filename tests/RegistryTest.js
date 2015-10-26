@@ -4,17 +4,18 @@
 /* global describe, it, beforeEach, afterEach */
 'use strict';
 
-var chai = require("chai");
-var sinon = require("sinon");
-var sinonChai = require("sinon-chai");
+var chai = require("chai"),
+	sinon = require("sinon"),
+	sinonChai = require("sinon-chai");
+
 chai.use(sinonChai);
 
-var mock = sinon.mock;
-var expect = chai.expect;
+var mock = sinon.mock,
+	expect = chai.expect;
 
-var Registry = require("../src/Registry");
-var NotRegisteredError = require("../src/errors/NotRegisteredError");
-var AlreadyRegisteredError = require("../src/errors/AlreadyRegisteredError");
+var Registry = require("../src/Registry"),
+	NotRegisteredError = require("../src/errors/NotRegisteredError"),
+	AlreadyRegisteredError = require("../src/errors/AlreadyRegisteredError");
 
 var MyObject = function(val) {
 	this.val = val;
@@ -93,6 +94,13 @@ describe("registry", function() {
 				registry.resolve('some.id')
 			).to.equal(1234);
 		});
+		it("throws an error if the logicalName argument isnt a string", function() {
+			expect(
+				registry.register.bind(registry, 1234)
+			).to.throw(
+				"Expected the 'logicalName' argument to be a String"
+			);
+		});
 	});
 	describe("#resolve", function() {
 		it("throws an error if nothing is registered for a logical name", function() {
@@ -124,6 +132,13 @@ describe("registry", function() {
 				registry.resolve('some.id').someFunc
 			).to.be.a("function");
 		});
+		it("throws an error if the logicalName argument isnt a string", function() {
+			expect(
+				registry.resolve.bind(registry, 1234)
+			).to.throw(
+				"Expected the 'logicalName' argument to be a String"
+			);
+		});
 	});
 	describe("#isRegistered", function() {
 		it("returns false if nothing is registered", function() {
@@ -136,6 +151,13 @@ describe("registry", function() {
 			expect(
 				registry.isRegistered('some.id')
 			).to.be.true;
+		});
+		it("throws an error if the logicalName argument isnt a string", function() {
+			expect(
+				registry.isRegistered.bind(registry, 1234)
+			).to.throw(
+				"Expected the 'logicalName' argument to be a String"
+			);
 		});
 	});
 	describe("#deregister", function() {
@@ -163,6 +185,13 @@ describe("registry", function() {
 			expect(
 				registry.resolve('some.id').val
 			).to.equal("abc");
+		});
+		it("throws an error if the logicalName argument isnt a string", function() {
+			expect(
+				registry.deregister.bind(registry, 1234)
+			).to.throw(
+				"Expected the 'logicalName' argument to be a String"
+			);
 		});
 	});
 	describe("#registeredNames", function() {

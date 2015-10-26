@@ -1,6 +1,12 @@
 'use strict';
 
-var sprintf = require("sprintf-js").sprintf;
+var sprintf = require("sprintf-js").sprintf,
+	Utils = require("./Utils"),
+	assertIsType = Utils.assertIsType,
+	shouldCallDestroyOnItem = Utils.shouldCallDestroyOnItem;
+	
+var AlreadyRegisteredError = require("./errors/AlreadyRegisteredError"),
+	NotRegisteredError = require("./errors/NotRegisteredError");
 
 var Registry = function() {
 	var theId = require("./Utils").generateId(),
@@ -12,30 +18,34 @@ var Registry = function() {
 	};
 	
 	this.register = function(logicalName, obj) {
+		assertIsType(logicalName, "logicalName", "string");
 		if (that.isRegistered(logicalName)) {
-			throw new (require("./errors/AlreadyRegisteredError"))(logicalName, that.id());
+			throw new AlreadyRegisteredError(logicalName, that.id());
 		}
 		
 		store[logicalName] = obj;
 	};
 	
 	this.deregister = function(logicalName) {
+		assertIsType(logicalName, "logicalName", "string");
 		if (!that.isRegistered(logicalName)) {
-			throw new (require("./errors/NotRegisteredError"))(logicalName, that.id());
+			throw new NotRegisteredError(logicalName, that.id());
 		}
 		
 		delete store[logicalName];
 	};
 	
 	this.resolve = function(logicalName) {
+		assertIsType(logicalName, "logicalName", "string");
 		if (!that.isRegistered(logicalName)) {
-			throw new (require("./errors/NotRegisteredError"))(logicalName, that.id());
+			throw new NotRegisteredError(logicalName, that.id());
 		}
 		
 		return store[logicalName];
 	};
 	
 	this.isRegistered = function(logicalName) {
+		assertIsType(logicalName, "logicalName", "string");
 		return logicalName in store;
 	};
 	
@@ -47,7 +57,7 @@ var Registry = function() {
 		for (var itemName in store) {
 			if (store.hasOwnProperty(itemName)) {
 				var item = store[itemName];
-				if (require("./Utils").shouldCallDestroyOnItem(item)) {
+				if (shouldCallDestroyOnItem(item)) {
 					try {
 						item.destroy();
 					} catch (e) {

@@ -10,6 +10,12 @@ var utils = module.exports = {
 		return Math.floor(Math.random() * (high - low + 1) + low);
 	},
 	
+	assertIsType : function(arg, argName, theType) {
+		if (typeof arg !== theType) {
+			throw new Error("Expected the '"+argName+"' argument to be a String");
+		}
+	},
+	
 	shouldCallDestroyOnItem : function(item) {
 		return typeof item === "object" && typeof item.destroy === "function" && item.destroy.length === 0;
 	}

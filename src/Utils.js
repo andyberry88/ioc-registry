@@ -8,6 +8,9 @@ var utils = module.exports = {
 	
 	random : function(low, high) {
 		return Math.floor(Math.random() * (high - low + 1) + low);
-	}
+	},
 	
+	shouldCallDestroyOnItem : function(item) {
+		return typeof item === "object" && typeof item.destroy === "function" && item.destroy.length === 0;
+	}
 };

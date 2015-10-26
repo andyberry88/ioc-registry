@@ -47,13 +47,11 @@ var Registry = function() {
 		for (var itemName in store) {
 			if (store.hasOwnProperty(itemName)) {
 				var item = store[itemName];
-				if (typeof item.destroy !== "undefined") {
-					if (item.destroy.length === 0) {
-						try {
-							item.destroy();
-						} catch (e) {
-							console.error( sprintf(Registry.LOG_MESSAGES.DISPOSE_ERROR, itemName, e) );
-						}
+				if (require("./Utils").shouldCallDestroyOnItem(item)) {
+					try {
+						item.destroy();
+					} catch (e) {
+						console.error( sprintf(Registry.LOG_MESSAGES.DISPOSE_ERROR, itemName, e) );
 					}
 				}
 			}

@@ -1037,6 +1037,10 @@ module.exports = exporting;
 
 var sprintf = require("sprintf-js").sprintf;
 
+function callDestroyOnItem(item) {
+	return typeof item === "object" && typeof item.destroy === "function" && item.destroy.length === 0;
+}
+
 var Registry = function() {
 	var theId = require("./Utils").generateId(),
 		store = {},
@@ -1082,13 +1086,11 @@ var Registry = function() {
 		for (var itemName in store) {
 			if (store.hasOwnProperty(itemName)) {
 				var item = store[itemName];
-				if (typeof item.destroy !== "undefined") {
-					if (item.destroy.length === 0) {
-						try {
-							item.destroy();
-						} catch (e) {
-							console.error( sprintf(Registry.LOG_MESSAGES.DISPOSE_ERROR, itemName, e) );
-						}
+				if (callDestroyOnItem(item)) {
+					try {
+						item.destroy();
+					} catch (e) {
+						console.error( sprintf(Registry.LOG_MESSAGES.DISPOSE_ERROR, itemName, e) );
 					}
 				}
 			}

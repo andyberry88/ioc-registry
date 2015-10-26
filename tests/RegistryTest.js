@@ -26,11 +26,11 @@ var mockConsole;
 describe("registry", function() {
 	beforeEach(function() {
 		registry = new Registry();
+		mockConsole = mock(console);
+		mockConsole.expects("error").never();
 	});
 	afterEach(function() {
-		if (mockConsole) {
-			mockConsole.restore();
-		}
+		mockConsole.restore();
 	});
 	describe("#id", function() {
 		it("returns the registry id", function() {
@@ -226,6 +226,13 @@ describe("registry", function() {
 			
 			registry.destroy();
 		});
+		it("doesnt call destroy if its not a function", function () {
+			var MyInterface = function() { this.destroy = "BOOM!" };
+			
+			registry.register('obj1', MyInterface);
+			
+			registry.destroy();
+		});
 		it("calls destroy on registered items even if first throws an error on destroy", function () {
 			var MyInterface = function() { this.destroy = function(){} };
 			var obj1 = new MyInterface();
@@ -239,6 +246,7 @@ describe("registry", function() {
 			registry.register('obj1', obj1);
 			registry.register('obj2', obj2);
 			
+			mockConsole.expects("error").once();
 			registry.destroy();
 			
 			mockObj1.verify();
@@ -248,7 +256,6 @@ describe("registry", function() {
 			var MyInterface = function() { this.destroy = function(){} };
 			var obj1 = new MyInterface();
 			
-			mockConsole = mock(console);
 			mockConsole.expects("error").withArgs("The item registered as 'obj1' threw an error while being destroyed. The error was: some error");
 			
 			var mockObj1 = mock(obj1);

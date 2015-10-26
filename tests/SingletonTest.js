@@ -28,5 +28,5 @@ describe("registry singleton", function() {
 		var registry1 = require("../");
 		var registry2 = require("../");
 		expect(registry1.id()).to.equal(registry2.id());
-	})
+	});
 });

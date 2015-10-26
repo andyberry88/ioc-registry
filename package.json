@@ -9,7 +9,7 @@
     "pretest": "npm run prepublish",
     "test": "npm run test:node && npm run test:browser",
     "test:node": "mocha src tests --check-leaks",
-    "test:dev": "npm run test -- -w -G --check-leaks",
+    "test:dev": "npm run test:node -- -w -G --check-leaks",
     "test:browser": "karma start",
     "test:browser:debug": "karma start karma-debug.conf.js",
     "test:saucelabs": "envcheck SAUCE_USERNAME && envcheck SAUCE_ACCESS_KEY && karma start karma-saucelabs.conf.js",
